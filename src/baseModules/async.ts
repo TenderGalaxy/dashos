@@ -1,4 +1,7 @@
 import { ts } from './taskScheduler.ts'
+
+type Vow = (resolve: () => void) => void
+type ThenFunction = (...args: any[]) => void
 export class Thread {
     task
     mode = this.every(2)
@@ -8,13 +11,13 @@ export class Thread {
         this.mode()
     }
     every(delay: number) {
-        return function () {
+        return function (res?: any) {
             //@ts-expect-error
-            ts.schedule(delay, () => this.step())
+            ts.schedule(delay, () => this.step(res))
         }
     }
-    step() {
-        let { value, done } = this.task.next()
+    step(res?: any) {
+        let { value, done } = this.task.next(res)
         if (done) {
             this.runThens(value)
         } else if (this.isValidCode(value)) {
@@ -23,11 +26,11 @@ export class Thread {
             this.mode()
         }
     }
-    #then: Function[] = []
-    then(f: Function) {
+    #then: ThenFunction[] = []
+    then(f: ThenFunction) {
         this.#then.push(f)
     }
-    runThens(...args: any[]) {
+    runThens(...args: ThenFunction[]) {
         for (let i of this.#then) {
             i(...args)
         }
@@ -40,7 +43,7 @@ export class Thread {
         switch (val.async) {
             case 'await':
                 //@ts-expect-error
-                val.func(() => this.mode())
+                val.func((res?: any) => this.mode(res))
                 break
             case 'halt':
                 break
@@ -48,19 +51,51 @@ export class Thread {
     }
 }
 export const thl = {
-    awaitPromise(f: Function) {
+    awaitPromise(f: Vow) {
         return { async: 'await', func: f }
+    },
+    awaitAll(l: Vow[]) {
+        return {
+            async: 'await',
+            func: (resolve: (res?: any) => void) => {
+                let num = l.length,
+                    satisfied = 0
+                for (let i of l) {
+                    i((res?: any) => {
+                        satisfied++
+                        if (satisfied == num) {
+                            resolve(res)
+                        }
+                    })
+                }
+            },
+        }
+    },
+    /*
+    awaitAll returns a Resolver function that calls every input Resolver and waits until they all finish.
+    */
+    awaitRace(l: Vow[]) {
+        return {
+            async: 'await',
+            func: (resolve: (res?: any) => void) => {
+                for (let i of l) {
+                    i((res?: any) => {
+                        resolve(res)
+                    })
+                }
+            },
+        }
     },
     halt() {
         return { async: 'halt' }
     },
     sleep(delay: number) {
-        return this.awaitPromise((resolve: Function) =>
+        return this.awaitPromise((resolve: () => void) =>
             //@ts-expect-error
             ts.schedule(delay, resolve),
         )
     },
-    *waitUntil(condition: Function) {
+    *waitUntil(condition: () => boolean) {
         while (!condition()) {
             yield
         }

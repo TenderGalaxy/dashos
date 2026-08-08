@@ -61,19 +61,36 @@ class Disk {
             this._setFileChapter(f, page, i, chapters[i] as string)
         }
     }
-    _getFile(f: rawFile): string {
-        let { pages } = JSON.parse(this._getFilePage(f, -1))
-        return Array.from({ length: pages }, (_, i) =>
-            this._getFilePage(f, i),
-        ).join('')
+    *_getFile(f: rawFile): Generator<void, string, void> {
+        let { pages } = JSON.parse(this._getFilePage(f, 0))
+        let out = ''
+        for (let i = 1; i <= pages; i++) {
+            out += this._getFilePage(f, i + 1)
+            yield
+        }
+        return out
     }
-    _setFile(f: rawFile, contents: string) {
+    *_setFile(f: rawFile, contents: string) {
         let pages = this.splitIntoChunks(
             contents,
             this.chapterLength * this.itemsInChest,
         )
-        for (let i = 0; i < pages.length; i++) {
+        for (let i = 1; i <= pages.length; i++) {
             this._setFilePage(f, i, pages[i] as string)
+            yield
+        }
+    }
+
+    *_loadFile(f: rawFile) {
+        yield* this.loadChunk([...f, 0])
+        let { pages } = JSON.parse(this._getFilePage(f, 0))
+        for (let i = 32; i <= (-32 & pages); i += 32) {
+            yield* this.loadChunk([...f, i])
+        }
+    }
+    *loadChunk(pos: [number, number, number]) {
+        while (api.getBlockId(pos) === 1) {
+            yield
         }
     }
 

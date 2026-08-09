@@ -58,6 +58,9 @@ class GameEngine {
             this.#loaded.set(this.getChunk(pos), Date.now())
         }
     }
+    isNearInterrupt() {
+        return false
+    }
 }
 export const api = new GameEngine(20)
 

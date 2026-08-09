@@ -71,7 +71,6 @@ for (let callback of callbackNames) {
     // @ts-expect-error
     globalThis[callback] = function () {
         let returnValue: any = undefined
-        // @ts-expect-error
         for (let j of callbacks[callback]) {
             let out = (j as Function)(...arguments)
             if (out != undefined) {

@@ -1,30 +1,33 @@
 {
-  "compilerOptions": {
-    "module": "NodeNext",
-    "moduleResolution": "NodeNext",
-    "target": "ESNext",
-    "strict": true,
+    "compilerOptions": {
+        "target": "ESNext",
+        "module": "NodeNext",
+        "moduleResolution": "NodeNext",
+        "strict": true,
 
-    // File Layout
-    "outDir": "./dist",
+        // File Layout
+        "outDir": "./dist",
 
-    // Other Outputs
-    "sourceMap": true,
-    "declaration": true,
-    "declarationMap": true,
+        // Other Outputs
+        "sourceMap": true,
+        "declaration": true,
+        "declarationMap": true,
 
-    // Stricter Typechecking Options
-    "noUncheckedIndexedAccess": true,
-    "exactOptionalPropertyTypes": true,
+        // Stricter Typechecking Options
+        "noUncheckedIndexedAccess": true,
+        "exactOptionalPropertyTypes": true,
 
-    // Recommended Options
-    "jsx": "react-jsx",
-    "verbatimModuleSyntax": true,
-    "isolatedModules": true,
-    "moduleDetection": "auto",
-    "skipLibCheck": true,
-    "noEmit": true,
-    "types": ["node"],
-    "allowImportingTsExtensions": true
-  }
+        // Recommended Options
+        "jsx": "react-jsx",
+        //"verbatimModuleSyntax": true,
+        "isolatedModules": true,
+        "moduleDetection": "auto",
+        "skipLibCheck": true,
+        "noEmit": true,
+        "types": ["node"],
+        //"allowImportingTsExtensions": true
+        "downlevelIteration": true,
+        "lib": ["ESNext", "DOM", "DOM.Iterable"]
+    },
+    "include": ["./testing/**/*"]
 }

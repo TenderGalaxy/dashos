@@ -1,6 +1,6 @@
 import vm from 'node:vm'
 import { parentPort, workerData } from 'node:worker_threads'
-import { api } from './api.ts'
+import { api } from './api.js'
 
 let { wc, cb, test } = workerData
 

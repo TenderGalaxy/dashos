@@ -1,5 +1,4 @@
-import { api } from '../../testing/api.ts'
-import './async.ts'
+import './async.js'
 
 type rawFile = [number, number]
 // Functions starting with an _ assume the file is already loaded and take in raw file input instead of filenames.
@@ -61,26 +60,35 @@ class Disk {
             this._setFileChapter(f, page, i, chapters[i] as string)
         }
     }
-    *_getFile(f: rawFile): Generator<void, string, void> {
+    *_getFile(f: rawFile, speed = 2): Generator<void, string, void> {
         let { pages } = JSON.parse(this._getFilePage(f, 0))
         let out = ''
         for (let i = 1; i <= pages; i++) {
             out += this._getFilePage(f, i + 1)
-            yield
+            if (i % speed == 0) yield
         }
         return out
     }
-    *_setFile(f: rawFile, contents: string) {
+    *getFile(f: string, speed = 2): Generator<void, string, void> {
+        let z: rawFile = this.hash(f)
+        yield* this._loadFile(z)
+        return yield* this._getFile(z, speed)
+    }
+    *_setFile(f: rawFile, contents: string, speed = 2) {
         let pages = this.splitIntoChunks(
             contents,
             this.chapterLength * this.itemsInChest,
         )
         for (let i = 1; i <= pages.length; i++) {
             this._setFilePage(f, i, pages[i] as string)
-            yield
+            if (i % speed == 0) yield
         }
     }
-
+    *setFile(f: string, contents: string, speed = 2) {
+        let z: rawFile = this.hash(f)
+        yield* this._loadFile(z)
+        yield* this._setFile(z, contents, speed)
+    }
     *_loadFile(f: rawFile) {
         yield* this.loadChunk([...f, 0])
         let { pages } = JSON.parse(this._getFilePage(f, 0))

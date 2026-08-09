@@ -4,7 +4,11 @@ export default async function test() {
         new Thread(
             (function* () {
                 yield thl.sleep(20)
-                return 45
+                let a = yield thl.awaitAll([
+                    (resolve) => ts.schedule(20, () => resolve(45)),
+                    (resolve) => ts.schedule(10, () => resolve()),
+                ])
+                return a
             })(),
         ).then(function (z: number) {
             resolve(z)

@@ -1,12 +1,13 @@
-import { callbacks } from './callbackManager.ts'
-import { time } from './time.ts'
-import { catchError } from './errors.ts'
+import { callbacks } from './callbackManager.js'
+import { time } from './time.js'
+import { catchError } from './errors.js'
 interface tsPlan {
     schedule(delay: number, func: Function, onError: Function): void
     scheduleFirstUnused(func: Function, onError: Function): number
     parseAction(toRun: task): void
     makeAction(func: Function, onError: Function): task
     tasks: Record<number, task[]>
+    stack: task[]
 }
 
 type task = {
@@ -15,6 +16,7 @@ type task = {
 }
 export const ts: tsPlan = {
     tasks: {},
+    stack: [],
     makeAction(func, onError) {
         return { func, onError }
     },
@@ -42,8 +44,12 @@ export const ts: tsPlan = {
     },
 }
 callbacks!.tick!.push(function () {
-    for (let i of ts.tasks[time] || []) {
-        ts.parseAction(i)
-    }
+    ts.stack.push(...(ts.tasks[time] || []))
     delete ts.tasks[time]
+    for (let i of ts.stack) {
+        ts.parseAction(i)
+        if (api.isNearInterrupt()) {
+            return
+        }
+    }
 })

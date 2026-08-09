@@ -1,33 +1,42 @@
 {
     "compilerOptions": {
-        "target": "ESNext",
+        "target": "esnext",
         "module": "NodeNext",
         "moduleResolution": "NodeNext",
         "strict": true,
-
-        // File Layout
-        "outDir": "./dist",
-
-        // Other Outputs
-        "sourceMap": true,
-        "declaration": true,
-        "declarationMap": true,
-
-        // Stricter Typechecking Options
-        "noUncheckedIndexedAccess": true,
-        "exactOptionalPropertyTypes": true,
-
-        // Recommended Options
-        "jsx": "react-jsx",
-        //"verbatimModuleSyntax": true,
-        "isolatedModules": true,
-        "moduleDetection": "auto",
         "skipLibCheck": true,
-        "noEmit": true,
         "types": ["node"],
-        //"allowImportingTsExtensions": true
-        "downlevelIteration": true,
-        "lib": ["ESNext", "DOM", "DOM.Iterable"]
-    },
-    "include": ["./testing/**/*"]
+        "noEmit": true,
+        "allowImportingTsExtensions": true
+    }
 }
+
+// {
+//     "compilerOptions": {
+//         "target": "esnext",
+//         "module": "NodeNext",
+//         "moduleResolution": "NodeNext",
+//         "strict": true,
+//         "lib": ["esnext", "dom", "dom.iterable"],
+
+//         // File Layout
+//         "outDir": "./dist",
+
+//         // Other Outputs
+//         "sourceMap": true,
+//         "declaration": true,
+//         "declarationMap": true,
+
+//         // Stricter Typechecking Options
+//         "noUncheckedIndexedAccess": true,
+//         "exactOptionalPropertyTypes": true,
+
+//         // Recommended Options
+//         "jsx": "react-jsx",
+//         "isolatedModules": true,
+//         "moduleDetection": "auto",
+//         "skipLibCheck": true,
+//         "noEmit": true,
+//         "types": ["node"]
+//     }
+// }

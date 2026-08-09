@@ -11,7 +11,7 @@ export class Thread {
         this.mode()
     }
     every(delay: number) {
-        return function (res?: any) {
+        return (res?: any) => {
             //@ts-expect-error
             ts.schedule(delay, () => this.step(res))
         }
@@ -30,9 +30,9 @@ export class Thread {
     then(f: ThenFunction) {
         this.#then.push(f)
     }
-    runThens(...args: ThenFunction[]) {
+    runThens(out: any) {
         for (let i of this.#then) {
-            i(...args)
+            i(out)
         }
     }
 
@@ -55,36 +55,36 @@ export const thl = {
         return { async: 'await', func: f }
     },
     awaitAll(l: Vow[]) {
-        return {
-            async: 'await',
-            func: (resolve: (res?: any) => void) => {
-                let num = l.length,
-                    satisfied = 0
-                for (let i of l) {
-                    i((res?: any) => {
-                        satisfied++
-                        if (satisfied == num) {
-                            resolve(res)
-                        }
-                    })
-                }
-            },
-        }
+        let out: any[] = []
+        let num = l.length,
+            satisfied = 0
+        return this.awaitPromise((resolve: (res?: any) => void) => {
+            for (let i of l) {
+                i((res?: any) => {
+                    satisfied++
+                    out.push(res)
+                    if (satisfied == num) {
+                        resolve(out)
+                    }
+                })
+            }
+        })
     },
     /*
     awaitAll returns a Resolver function that calls every input Resolver and waits until they all finish.
     */
     awaitRace(l: Vow[]) {
-        return {
-            async: 'await',
-            func: (resolve: (res?: any) => void) => {
-                for (let i of l) {
-                    i((res?: any) => {
+        let resolved = false
+        return this.awaitPromise((resolve: (res?: any) => void) => {
+            for (let i of l) {
+                i((res?: any) => {
+                    if (!resolved) {
                         resolve(res)
-                    })
-                }
-            },
-        }
+                        resolved = true
+                    }
+                })
+            }
+        })
     },
     halt() {
         return { async: 'halt' }

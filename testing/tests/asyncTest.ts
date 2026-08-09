@@ -6,7 +6,7 @@ export default async function test() {
                 yield thl.sleep(20)
                 let a = yield thl.awaitAll([
                     (resolve) => ts.schedule(20, () => resolve(45)),
-                    (resolve) => ts.schedule(10, () => resolve()),
+                    (resolve) => ts.schedule(10, () => resolve(10)),
                 ])
                 return a
             })(),
@@ -14,5 +14,5 @@ export default async function test() {
             resolve(z)
         })
     })
-    return out == 45
+    return out[0] == 10 && out[1] == 45
 }

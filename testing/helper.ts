@@ -1,7 +1,7 @@
 import vm from 'node:vm'
 import { parentPort, workerData } from 'node:worker_threads'
-import { api } from './api.js'
-
+import { api } from './api.ts'
+globalThis.api = api
 let { wc, cb, test } = workerData
 
 vm.runInThisContext(wc)
@@ -13,3 +13,4 @@ setInterval(tick, api.tickLength)
 const f = (await import(test)).default
 let out = await f(api.tickLength)
 parentPort?.postMessage(out)
+process.exit(0)

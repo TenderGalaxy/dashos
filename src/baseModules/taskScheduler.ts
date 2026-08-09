@@ -46,8 +46,8 @@ export const ts: tsPlan = {
 callbacks!.tick!.push(function () {
     ts.stack.push(...(ts.tasks[time] || []))
     delete ts.tasks[time]
-    for (let i of ts.stack) {
-        ts.parseAction(i)
+    while (ts.stack.length > 0) {
+        ts.parseAction(ts.stack.pop() as task)
         if (api.isNearInterrupt()) {
             return
         }

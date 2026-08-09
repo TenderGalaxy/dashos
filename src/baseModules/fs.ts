@@ -102,6 +102,26 @@ class Disk {
         }
     }
 
+    *createNewVolume(name: string) {
+        let f = this.hash(name)
+        yield* this.loadChunk([...f, 0])
+        this._setFilePage(f, 1, '{pages: 0}')
+    }
+    *createNewFile(parent: string, name: string) {
+        let child = this.hash(this.joinPath(parent, name))
+        let parentFile = this.hash(parent)
+        yield* this._loadFile(parentFile)
+
+        let parentFileContents = JSON.parse(yield* this._getFile(parentFile))
+        parentFileContents.children.push(name)
+        yield* this._setFile(parentFile, JSON.stringify(parentFileContents))
+
+        yield* this.loadChunk([...child, 0])
+        this._setFilePage(child, 0, '{pages: 0}')
+    }
+    joinPath(parent: string, child: string) {
+        return parent + '/' + child
+    }
     constructor() {}
 }
 export const fs = new Disk()

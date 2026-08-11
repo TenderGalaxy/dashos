@@ -7,7 +7,7 @@ type rawFile = [number, number]
 // File Config Page: -1
 class Disk {
     itemsInChest = 36
-    chapterLength = 380
+    netLength = 380
 
     hash(s: string): rawFile {
         let out = 5381
@@ -26,61 +26,60 @@ class Disk {
         }
         return out
     }
-    _setFileChapter(
-        f: rawFile,
-        page: number,
-        chapter: number,
-        contents: string,
-    ): void {
-        api.setStandardChestItemSlot(
-            [...f, page],
-            chapter,
-            'Net',
-            1,
-            undefined,
-            {
-                customDescription: contents,
-            },
-        )
+    _setFileNet(f: rawFile, page: number, idx: number, contents: string): void {
+        api.setStandardChestItemSlot([...f, page], idx, 'Net', 1, undefined, {
+            customDescription: contents,
+        })
     }
-    _getFileChapter(f: rawFile, page: number, chapter: number): string {
+    _getFileNet(f: rawFile, page: number, idx: number): string {
         return (
-            api.getStandardChestItemSlot([...f, page], chapter)?.attributes
+            api.getStandardChestItemSlot([...f, page], idx)?.attributes
                 ?.customDescription || ''
         )
     }
     _getFilePage(f: rawFile, page: number): string {
-        return Array.from({ length: this.itemsInChest }, (_, i) =>
-            this._getFileChapter(f, page, i),
-        ).join('')
+        let out = ''
+        for (let i = 0; i < this.itemsInChest; i++) {
+            let v = this._getFileNet(f, page, i)
+            out += v
+            if (v == '') return out
+        }
+        return out
     }
     _setFilePage(f: rawFile, page: number, contents: string) {
-        let chapters = this.splitIntoChunks(contents, this.chapterLength)
-        for (let i = 0; i < chapters.length; i++) {
-            this._setFileChapter(f, page, i, chapters[i] as string)
+        let nets = this.splitIntoChunks(contents, this.netLength)
+        for (let i = 0; i < this.itemsInChest; i++) {
+            this._setFileNet(f, page, i, nets[i] || '')
         }
     }
-    *_getFile(f: rawFile, speed = 2): Generator<void, string, void> {
-        let { pages } = JSON.parse(this._getFilePage(f, 0))
+    *_getFile(
+        f: rawFile,
+        speed = 2,
+        pages = undefined,
+    ): Generator<void, string, void> {
+        if (pages == undefined) {
+            pages = JSON.parse(this._getFilePage(f, 0)).pages
+        }
         let out = ''
-        for (let i = 1; i <= pages; i++) {
-            out += this._getFilePage(f, i + 1)
+        for (let i = 1; i <= (pages as unknown as number); i++) {
+            out += this._getFilePage(f, i)
             if (i % speed == 0) yield
         }
         return out
     }
     *getFile(f: string, speed = 2): Generator<void, string, void> {
         let z: rawFile = this.hash(f)
-        yield* this._loadFile(z)
-        return yield* this._getFile(z, speed)
+        let pages = yield* this._loadFile(z)
+        return yield* this._getFile(z, speed, pages)
     }
     *_setFile(f: rawFile, contents: string, speed = 2) {
         let pages = this.splitIntoChunks(
             contents,
-            this.chapterLength * this.itemsInChest,
+            this.netLength * this.itemsInChest,
         )
-        for (let i = 1; i <= pages.length; i++) {
-            this._setFilePage(f, i, pages[i] as string)
+        this._setFilePage(f, 0, `{"pages": ${pages.length.toString()}}`)
+        for (let i = 0; i < pages.length; i++) {
+            this._setFilePage(f, i + 1, pages[i] as string)
             if (i % speed == 0) yield
         }
     }
@@ -95,6 +94,7 @@ class Disk {
         for (let i = 32; i <= (-32 & pages); i += 32) {
             yield* this.loadChunk([...f, i])
         }
+        return pages
     }
     *loadChunk(pos: [number, number, number]) {
         while (api.getBlockId(pos) === 1) {
@@ -105,7 +105,8 @@ class Disk {
     *createNewVolume(name: string) {
         let f = this.hash(name)
         yield* this.loadChunk([...f, 0])
-        this._setFilePage(f, 1, '{pages: 0}')
+        this._setFilePage(f, 0, '{"pages": 1}')
+        this._setFilePage(f, 1, '{"children": []}')
     }
     *createNewFile(parent: string, name: string) {
         let child = this.hash(this.joinPath(parent, name))
@@ -117,10 +118,13 @@ class Disk {
         yield* this._setFile(parentFile, JSON.stringify(parentFileContents))
 
         yield* this.loadChunk([...child, 0])
-        this._setFilePage(child, 0, '{pages: 0}')
+        this._setFilePage(child, 0, '{"pages": 0}')
     }
-    joinPath(parent: string, child: string) {
-        return parent + '/' + child
+    joinPath(...args: string[]): string {
+        return args.join('/')
+    }
+    popPath(path: string, amount = 1) {
+        return path.split('/').slice(0, -amount).join('/')
     }
     constructor() {}
 }

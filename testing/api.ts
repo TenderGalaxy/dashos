@@ -43,7 +43,7 @@ class GameEngine {
         }
     }
     posIdxToItem(pos: position, idx: number): string {
-        return `${pos[0]}|${pos[1]}|${pos[1]}|${idx}`
+        return `${pos[0]}|${pos[1]}|${pos[2]}|${idx}`
     }
 
     isLoaded(pos: position): boolean {

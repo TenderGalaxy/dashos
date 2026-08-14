@@ -6,7 +6,8 @@ export default async function test() {
             yield* fs.createNewVolume('sys')
             yield* fs.createNewFile('sys', 'data.txt')
             yield* fs.setFile('sys/data.txt', 'testing')
-            return yield* fs.getFile('sys/data.txt')
+            let out = yield* fs.getFile('sys/data.txt')
+            return out == 'testing'
         })(),
     )
     return new Promise((res) => thread.then(res))

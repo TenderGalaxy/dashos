@@ -1,6 +1,6 @@
-import { callbacks } from './callbackManager.js'
-import { time } from './time.js'
-import { catchError } from './errors.js'
+import { callbacks } from './callbackManager.ts'
+import { time } from './time.ts'
+import { catchError } from './errors.ts'
 interface tsPlan {
     schedule(delay: number, func: Function, onError: Function): void
     scheduleFirstUnused(func: Function, onError: Function): number

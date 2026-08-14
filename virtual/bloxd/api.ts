@@ -1,3 +1,4 @@
+import blocks from '../blockNames.json'
 type position = [number, number, number]
 
 class GameEngine {
@@ -34,11 +35,11 @@ class GameEngine {
         }
         return { attributes: { customDescription: this.#chestData.get(p) } }
     }
-    getBlockId(pos: position): number {
-        if (this.isLoaded(pos)) {
+    getBlockId(x: number, y: number, z: number): number {
+        if (this.isLoaded([x, y, z])) {
             return 2
         } else {
-            this.load(pos)
+            this.load([x, y, z])
             return 1
         }
     }
@@ -61,6 +62,10 @@ class GameEngine {
     isNearInterrupt() {
         return false
     }
+    blockIdToBlockName(id: number) {
+        return blocks[id]
+    }
+    setBlock(pos: position, id: string) {}
 }
 export const api = new GameEngine(20)
 declare global {

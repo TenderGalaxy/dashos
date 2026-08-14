@@ -1,4 +1,4 @@
-import { ts } from './taskScheduler.js'
+import { ts } from './taskScheduler.ts'
 
 type Vow = (resolve: () => void) => void
 type ThenFunction = (...args: any[]) => void

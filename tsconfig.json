@@ -2,12 +2,13 @@
     "compilerOptions": {
         "target": "esnext",
         "module": "NodeNext",
-        "moduleResolution": "NodeNext",
         "strict": true,
         "skipLibCheck": true,
         "types": ["node"],
         "noEmit": true,
-        "allowImportingTsExtensions": true
+        "allowImportingTsExtensions": true,
+        "resolveJsonModule": true,
+        "allowArbitraryExtensions": true
     }
 }
 

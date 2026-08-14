@@ -1,4 +1,4 @@
-import './async.js'
+import './async.ts'
 
 type rawFile = [number, number]
 // Functions starting with an _ assume the file is already loaded and take in raw file input instead of filenames.
@@ -97,7 +97,7 @@ class Disk {
         return pages
     }
     *loadChunk(pos: [number, number, number]) {
-        while (api.getBlockId(pos) === 1) {
+        while (api.getBlockId(...pos) === 1) {
             yield
         }
     }

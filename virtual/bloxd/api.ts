@@ -1,4 +1,5 @@
-import blocks from '../blockNames.json'
+import blocks from './blockNames.json' with { type: 'json' }
+import blockTextures from './blocks.json' with { type: 'json' }
 type position = [number, number, number]
 
 class GameEngine {
@@ -6,6 +7,9 @@ class GameEngine {
         this.tickLength = tickLength
     }
     tickLength
+    screen = Array.from({ length: 128 }, (i) =>
+        Array.from({ length: 64 }, (j) => [0, 0, 0]),
+    )
     #chestData = new Map()
     #loaded = new Map()
     getChunk(p: position): string {
@@ -65,7 +69,15 @@ class GameEngine {
     blockIdToBlockName(id: number) {
         return blocks[id]
     }
-    setBlock(pos: position, id: string) {}
+    blockNameToBlockId(id: string) {
+        return blocks.indexOf(id)
+    }
+    setBlock(pos: position, id: string) {
+        //@ts-expect-error
+        screen[pos[0] + 64][64 - pos[1]] =
+            //@ts-expect-error
+            (blockTextures[id] || blockTextures[blocks.indexOf(id)])[1][1]
+    }
 }
 export const api = new GameEngine(20)
 declare global {

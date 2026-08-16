@@ -15,9 +15,12 @@ for (let block of blockNames) {
         if (typeof texture == 'number') {
             continue
         }
+        out.push([block, [Number.MAX_VALUE, [0, 0, 0]]])
     } else if (typeof texture == 'object') {
+        out.push([block, [Number.MAX_VALUE, [0, 0, 0]]])
         continue
     }
+    let flag = false
     for (let texturePack of fallChain) {
         let img
         try {
@@ -49,9 +52,13 @@ for (let block of blockNames) {
                 variance +=
                     i[0] + i[1] + i[2] - average[0] - average[1] - average[2]
             }
+            flag = true
             out.push([block, [variance, average]])
-            continue
+            break
         } catch {}
+    }
+    if (!flag) {
+        out.push([block, [0, [255, 255, 255]]])
     }
 }
 writeFile('./virtual/bloxd/blocks.json', JSON.stringify(out, null, 2))

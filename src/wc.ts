@@ -1,9 +1,4 @@
-import './boot/async.ts'
-import './boot/callbackManager.ts'
-import './boot/errors.ts'
-import './boot/taskScheduler.ts'
-import './boot/time.ts'
-import './boot/fs.ts'
+import './boot/index.ts'
 console.log(
     'Welcome to DashOS! Please use the "Default 2" Texture pack for optimal screen quality.',
 )

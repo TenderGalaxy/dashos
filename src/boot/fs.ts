@@ -27,7 +27,7 @@ class Disk {
         return out
     }
     _setFileNet(f: rawFile, page: number, idx: number, contents: string): void {
-        api.setStandardChestItemSlot([...f, page], idx, 'Net', 1, undefined, {
+        api.setStandardChestItemSlot([...f, page], idx, 'Net', 1, null, {
             customDescription: contents,
         })
     }
@@ -55,9 +55,9 @@ class Disk {
     *_getFile(
         f: rawFile,
         speed = 2,
-        pages = undefined,
+        pages = null,
     ): Generator<void, string, void> {
-        if (pages == undefined) {
+        if (pages == null) {
             pages = JSON.parse(this._getFilePage(f, 0)).pages
         }
         let out = ''

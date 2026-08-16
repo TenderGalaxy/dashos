@@ -5,7 +5,7 @@ type ThenFunction = (...args: any[]) => void
 export class Thread {
     task
     mode = this.every(2)
-    returnValue: any = undefined
+    returnValue: any
     constructor(f: Generator<any, any, any>) {
         this.task = f
         this.mode()

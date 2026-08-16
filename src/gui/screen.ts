@@ -1,35 +1,33 @@
-export class Screen {
+export class Display {
     x = 128
     y = 64
     pos = [0, 0, 50]
-    up = 1
-    right = 0
-    screen: number[][]
+    pixels: Array<Array<number | string>>
     white = 144
     black = 86
-    constructor(x = 128, y = 64, pos = [0, 0, 50], up = 1, right = 0) {
+    constructor(x = 128, y = 64, pos = [0, 0, 50]) {
         this.x = x
         this.y = y
         this.pos = pos
-        this.screen = Array.from({ length: y }, (_, i) =>
+        this.pixels = Array.from({ length: y }, (_, i) =>
             Array(x).fill(this.white),
         )
-        this.up = up
-        this.right = right
     }
     render() {
-        let p = [0, 0, 0]
-        for (; p[this.up] < this.y; p[this.up]++) {
-            for (p[this.right] = 0; p[this.right] < this.x; p[this.right]++) {
+        let hx = this.x >> 1
+
+        for (let i = 0; i < this.y; i++) {
+            for (let j = 0; j < this.x; j++) {
                 api.setBlock(
                     [
-                        this.pos[0] + p[0],
-                        this.pos[1] + p[1],
-                        this.pos[2] + p[2],
+                        this.pos[0] + j - hx,
+                        this.pos[1] + this.y - i + 1,
+                        this.pos[2],
                     ],
-                    this.screen[this.up][this.right].toString(),
+                    this.pixels[i][j].toString(),
                 )
             }
         }
     }
 }
+export const display = new Display()

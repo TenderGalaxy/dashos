@@ -1,6 +1,7 @@
 {
     "type": "module",
     "dependencies": {
+        "chalk": "^6.0.0",
         "esbuild": "^0.28.2",
         "sharp": "^0.35.3"
     },
@@ -8,7 +9,7 @@
         "esbuild@0.28.2": true
     },
     "scripts": {
-        "esbuild": "esbuild ./src/wc.ts --bundle --format=esm --tree-shaking=false --outfile=dist/wc.js && esbuild ./src/cb.ts --sourcemap --format=esm --tree-shaking=false --outfile=dist/cb.js",
+        "esbuild": "esbuild ./src/wc.ts --bundle --format=esm --tree-shaking=false --outfile=dist/wc.js && esbuild ./src/cb.ts --bundle --format=esm --tree-shaking=false --outfile=dist/cb.js",
         "build": "node ./virtual/bloxd/parseTextures.ts && tsc && npm run esbuild && node virtual/runTests.ts"
     },
     "sideEffects": [

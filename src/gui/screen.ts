@@ -29,5 +29,10 @@ export class Display {
             }
         }
     }
+    setPixel(y: number, x: number, v: number | string) {
+        if (0 <= y && y < this.y && 0 <= x && x < this.x) {
+            this.pixels[y][x] = v
+        }
+    }
 }
 export const display = new Display()

@@ -1,33 +1,20 @@
+import { windows, type Window } from './windowManager.ts'
 import { display } from './screen.ts'
-export const windows = {
-    regist: Array<string>(),
-    funcs: {} as Record<string, () => void>,
-    add(rend: () => void, id: string) {
-        this.regist.push(id)
-        this.funcs[id] = rend
-    },
-    bringToFront(id: string) {
-        this.regist.splice(this.regist.indexOf(id), 1)
-        this.regist.unshift(id)
-    },
-    sendToBack(id: string) {
-        this.regist.splice(this.regist.indexOf(id, 1))
-        this.regist.push(id)
-    },
-    render() {
-        for (let i of this.regist) {
-            this.funcs[i]()
-        }
-    },
-}
-export class Window {
+import font from '../utils/font/font.json' with { type: 'json' }
+
+export class BasicWindow implements Window {
     pos
     x
     y
     data: Array<Array<number | string>>
     id: string
     man
-    constructor(x: number, y: number, pos: [number, number], man = windows) {
+    constructor(
+        x: number,
+        y: number,
+        pos: [number, number],
+        man: typeof windows,
+    ) {
         this.pos = pos
         this.x = x
         this.y = y
@@ -36,7 +23,7 @@ export class Window {
         )
         this.id = Math.random().toString(36).slice(2)
         this.man = man
-        this.man.add(() => this.render(), this.id)
+        this.man.add(this, this.id)
     }
     fillBorder(color: number | string) {
         for (let i = 0; i < this.x; i++) {
@@ -48,6 +35,7 @@ export class Window {
             this.data[i][this.x - 1] = color
         }
     }
+    click(a: [number, number]) {}
     fill(color: number | string) {
         for (let i = 0; i < this.y; i++) {
             for (let j = 0; j < this.x; j++) {

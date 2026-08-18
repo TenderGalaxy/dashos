@@ -2,12 +2,12 @@ import blocks from './blockNames.json' with { type: 'json' }
 import blockTextures from './blocks.json' with { type: 'json' }
 import chalk from 'chalk'
 type position = [number, number, number]
-
 class GameEngine {
     constructor(tickLength: number) {
         this.tickLength = tickLength
     }
     tickLength
+    facingInfo = [0, 0, 50]
     screen: number[][][] = Array.from({ length: 64 }, (i) =>
         Array.from({ length: 128 }, (j) => [255, 255, 255]),
     )
@@ -15,6 +15,9 @@ class GameEngine {
     #loaded = new Map()
     getChunk(p: position): string {
         return `${p[0] >> 5}|${p[1] >> 5}|${p[2] >> 5}`
+    }
+    getPlayerId(f: string) {
+        return '-1'
     }
     setStandardChestItemSlot(
         pos: position,
@@ -89,6 +92,16 @@ class GameEngine {
             out = out.flatMap((i) => [i, i])
             console.log(out.join(''))
         }
+    }
+    getPlayerFacingInfo(v: string) {
+        return {
+            dir: this.facingInfo,
+            camPos: [0, 0, 0],
+        }
+    }
+    setCursorPos(v: [number, number]) {
+        this.facingInfo[0] = v[0] - 64
+        this.facingInfo[1] = 64 - v[1]
     }
 }
 export const api = new GameEngine(20)

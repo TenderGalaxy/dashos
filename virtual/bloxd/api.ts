@@ -1,6 +1,5 @@
 import blocks from './blockNames.json' with { type: 'json' }
 import blockTextures from './blocks.json' with { type: 'json' }
-import chalk from 'chalk'
 type position = [number, number, number]
 class GameEngine {
     constructor(tickLength: number) {
@@ -83,15 +82,16 @@ class GameEngine {
         ] || blockTextures[blocks.indexOf(id)])[1][1]
     }
     renderScreen() {
-        for (let i = 0; i < 64; i++) {
-            let out = []
-            for (let j = 0; j < 128; j++) {
-                let [r, g, b] = this.screen[i][j]
-                out.push(chalk.rgb(r, g, b)('█'))
+        let out = '\x1b[H'
+        for (let y = 0; y < 64; y += 2) {
+            for (let x = 0; x < 128; x++) {
+                const [tr, tg, tb] = this.screen[y][x] || [255, 0, 0]
+                const [br, bg, bb] = this.screen[y + 1][x] || [255, 0, 0]
+                out += `\x1b[38;2;${tr};${tg};${tb}m\x1b[48;2;${br};${bg};${bb}m▀`
             }
-            out = out.flatMap((i) => [i, i])
-            console.log(out.join(''))
+            out += '\x1b[0m\n'
         }
+        process.stdout.write(out)
     }
     getPlayerFacingInfo(v: string) {
         return {
@@ -104,7 +104,7 @@ class GameEngine {
         this.facingInfo[1] = 64 - v[1]
     }
 }
-export const api = new GameEngine(20)
+export const api = new GameEngine(1)
 declare global {
     var api: GameEngine
 }

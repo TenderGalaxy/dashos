@@ -15,9 +15,9 @@ for (let block of blockNames) {
         if (typeof texture == 'number') {
             continue
         }
-        out.push([block, [Number.MAX_VALUE, [0, 0, 0]]])
+        out.push([block, [Number.MAX_VALUE, [255, 255, 255]]])
     } else if (typeof texture == 'object') {
-        out.push([block, [Number.MAX_VALUE, [0, 0, 0]]])
+        out.push([block, [Number.MAX_VALUE, [255, 255, 255]]])
         continue
     }
     let flag = false

@@ -3,7 +3,7 @@ import json
 import numpy as np
 import os
 
-font = ImageFont.truetype(os.path.join(os.path.dirname(__file__), "m5x7.ttf"), size = 16, layout_engine=ImageFont.Layout.BASIC)
+font = ImageFont.truetype(os.path.join(os.path.dirname(__file__), "ttf", "micro-h5.ttf"), size = 8, layout_engine=ImageFont.Layout.BASIC)
 data = {}
 
 for char in map(chr, range(32, 200)):
@@ -19,5 +19,9 @@ for char in map(chr, range(32, 200)):
         'height': height,
         'pixels': ''.join(map(str, pixels))
     }
-with open(os.path.join(os.path.dirname(__file__), 'font.json'), 'w') as f:
+with open(os.path.join(os.path.dirname(__file__), 'fonts', 'default.json'), 'w') as f:
     json.dump(data, f, indent=2)
+with open(os.path.join(os.path.dirname(__file__), 'fonts', 'defaultMeta.json'), 'w') as f:
+    json.dump({
+        'height': 5
+    }, f, indent=2)

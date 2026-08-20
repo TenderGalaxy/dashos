@@ -1,6 +1,7 @@
 import { windows, type Window } from './windowManager.ts'
 import { display } from './screen.ts'
-import font from '../utils/font/font.json' with { type: 'json' }
+import font from '../utils/font/fonts/default.json' with { type: 'json' }
+import meta from '../utils/font/fonts/defaultMeta.json' with { type: 'json' }
 
 export class BasicWindow implements Window {
     pos
@@ -13,7 +14,7 @@ export class BasicWindow implements Window {
         x: number,
         y: number,
         pos: [number, number],
-        man: typeof windows,
+        man: typeof windows = windows,
     ) {
         this.pos = pos
         this.x = x
@@ -61,5 +62,46 @@ export class BasicWindow implements Window {
                 }
             }
         }
+    }
+    drawTextAt(
+        pos: [number, number],
+        text: string,
+        maxX = this.x - 1,
+        on = display.black,
+        off = display.white,
+        spacing = 0,
+    ) {
+        let [y, x] = pos
+        for (let i of text) {
+            let { width, height } = font[i as keyof typeof font]
+            if (width + x > maxX) {
+                x = pos[0]
+                y += meta.height + 1
+            }
+            this.drawCharAt([y + meta.height, x], i, on, off)
+            x += width + spacing
+        }
+    }
+    drawCharAt(
+        pos: [number, number],
+        text: string,
+        on = display.black,
+        off = display.white,
+    ) {
+        let { width, height, pixels } = font[text as keyof typeof font]
+        let idx = 0
+        for (let i = 0; i < height; i++) {
+            for (let j = 0; j < width; j++, idx++) {
+                this.data[pos[0] - height + i][pos[1] + j] =
+                    pixels[idx] == '1' ? on : off
+            }
+        }
+    }
+    getTextColumnAmount(text: string) {
+        let out = 0
+        for (let i of text) {
+            out += font[i as keyof typeof font].width + 1
+        }
+        return out
     }
 }

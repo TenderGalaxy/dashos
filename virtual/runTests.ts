@@ -24,11 +24,14 @@ for (let i of files) {
     console.log(`Now testing ${i}`)
 
     let out = await run(wc, cb, j)
-    if (out === true) {
-        console.log('Test passed.')
-    } else if (out === false) {
-        console.log('Test failed.')
-    } else {
-        console.log(`Output: ${out}`)
+    if (out === false) {
+        throw new Error('Test failed.')
     }
+    // if (out === true) {
+    //     console.log('Test passed.')
+    // } else if (out === false) {
+    //     console.log('Test failed.')
+    // } else {
+    //     console.log(`Output: ${out}`)
+    // }
 }

@@ -1,6 +1,7 @@
 import { readdir, readFile } from 'node:fs/promises'
 import sharp from 'sharp'
-import rgbToId from '../rgbToId.js'
+import rgbToId from '../rgbToId.ts'
+import blocks from '../../textures/blocks.json' with { type: 'json' }
 
 const files = (await readdir('./src/utils/images/in')).filter(
     (i) => !i.startsWith('.'),
@@ -18,5 +19,10 @@ for (let i of files) {
             (_, j) => pixels.data[3 * j + i],
         ),
     )
-    console.log(r, g, b)
+    for (let i = 0; i < pixels.data.length; i += 3) {
+        console.log(
+            rgbToId([pixels.data[i], pixels.data[i + 1], pixels.data[i + 2]])
+                .name,
+        )
+    }
 }

@@ -27,7 +27,7 @@ class Disk {
         return out
     }
     _setFileNet(f: rawFile, page: number, idx: number, contents: string): void {
-        api.setStandardChestItemSlot([...f, page], idx, 'Net', 1, null, {
+        api.setStandardChestItemSlot([...f, page], idx, 'Net', 1, undefined, {
             customDescription: contents,
         })
     }

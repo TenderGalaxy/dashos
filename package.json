@@ -3,14 +3,13 @@
     "dependencies": {
         "chalk": "^6.0.0",
         "esbuild": "^0.28.2",
-        "sharp": "^0.35.3",
-        "terminal-canvas": "^3.1.2"
+        "sharp": "^0.35.3"
     },
     "allowScripts": {
         "esbuild@0.28.2": true
     },
     "scripts": {
-        "esbuild": "esbuild ./src/wc.ts --bundle --format=esm --tree-shaking=false --outfile=dist/wc.js && esbuild ./src/cb.ts --bundle --format=esm --tree-shaking=false --outfile=dist/cb.js",
+        "esbuild": "esbuild ./src/wc.ts --bundle --format=esm --tree-shaking=false --outfile=dist/wc.js && esbuild ./src/cb.ts --bundle --format=esm --tree-shaking=false --outfile=dist/cb.js && cp ./dist/wc.js ./dist/index.js",
         "build": "node ./virtual/bloxd/parseTextures.ts && python3 src/utils/font/make.py && tsc && npm run esbuild && node virtual/runTests.ts"
     },
     "sideEffects": [

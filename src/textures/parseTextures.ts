@@ -1,6 +1,6 @@
 const fallChain = [
-    './virtual/bloxd/main-packs/default2/textures',
-    './virtual/bloxd/main-packs/default/textures',
+    './src/textures/main-packs/default2/textures',
+    './src/textures/main-packs/default/textures',
 ]
 import textures from './textures.json' with { type: 'json' }
 import blockNames from './blockNames.json' with { type: 'json' }
@@ -61,4 +61,4 @@ for (let block of blockNames) {
         out.push([block, [0, [255, 255, 255]]])
     }
 }
-writeFile('./virtual/bloxd/blocks.json', JSON.stringify(out, null, 2))
+writeFile('./src/textures/blocks.json', JSON.stringify(out, null, 2))

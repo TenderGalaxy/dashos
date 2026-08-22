@@ -25,3 +25,8 @@ Structure
     - tests : tests to evaluate the code
 
     runTests.ts : run the tests
+
+TODO:
+Write updateDisk.ts
+Update gui/windows.ts
+Write utils/images/parse.ts

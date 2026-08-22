@@ -9,8 +9,7 @@
         "esbuild@0.28.2": true
     },
     "scripts": {
-        "esbuild": "esbuild ./src/wc.ts --bundle --format=esm --tree-shaking=false --outfile=dist/wc.js && esbuild ./src/cb.ts --bundle --format=esm --tree-shaking=false --outfile=dist/cb.js && cp ./dist/wc.js ./dist/index.js",
-        "build": "node ./virtual/bloxd/parseTextures.ts && python3 src/utils/font/make.py && tsc && npm run esbuild && node virtual/runTests.ts"
+        "build": "python3 src/utils/font/make.py && node ./src/textures/parseTextures.ts && esbuild ./src/wc.ts --bundle --format=esm --tree-shaking=false --outfile=dist/wc.js && esbuild ./src/cb.ts --bundle --format=esm --tree-shaking=false --outfile=dist/cb.js && cp ./dist/wc.js ./dist/index.js"
     },
     "sideEffects": [
         "**/*"

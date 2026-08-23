@@ -7,15 +7,15 @@ callbacks.tick.push(function () {
     const { dir, camPos } = api.getPlayerFacingInfo(user as string)
     const scaling = (display.pos[2] - camPos[2]) / dir[2]
     let pPos = [
-        (dir[0] + display.pos[0] - camPos[0]) * scaling - display.x / 2,
-        display.y - (dir[1] + display.pos[1] - camPos[1]) * scaling,
-    ]
+        display.pos[1] + display.y - dir[1] * scaling - camPos[1],
+        dir[0] * scaling + camPos[0] + (display.x >> 1) - display.pos[0],
+    ].map(Math.floor)
     if (
-        0 <= pPos[0] &&
-        pPos[0] < display.x &&
         0 <= pPos[1] &&
-        pPos[1] < display.y
+        pPos[0] < display.y &&
+        0 <= pPos[0] &&
+        pPos[1] < display.x
     ) {
-        cursorPos = [pPos[0], pPos[1]]
+        cursorPos = [pPos[0], pPos[1]] as [number, number]
     }
 })

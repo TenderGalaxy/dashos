@@ -7,12 +7,13 @@ export class BasicWindow implements Window {
     pos
     x
     y
-    data: Array<Array<number | string>>
+    data: Array<Array<string>>
     id: string
     man
+    showing = true
     constructor(
-        x: number,
         y: number,
+        x: number,
         pos: [number, number],
         man: typeof windows = windows,
     ) {
@@ -26,7 +27,7 @@ export class BasicWindow implements Window {
         this.man = man
         this.man.add(this, this.id)
     }
-    fillBorder(color: number | string) {
+    fillBorder(color: string) {
         for (let i = 0; i < this.x; i++) {
             this.data[0][i] = color
             this.data[this.y - 1][i] = color
@@ -36,8 +37,11 @@ export class BasicWindow implements Window {
             this.data[i][this.x - 1] = color
         }
     }
-    click(a: [number, number]) {}
-    fill(color: number | string) {
+    click(a: [number, number]) {
+        this.onClick([a[0] - this.pos[0], a[1] - this.pos[1]])
+    }
+    onClick = function (cursorPos: [number, number]) {}
+    fill(color: string) {
         for (let i = 0; i < this.y; i++) {
             for (let j = 0; j < this.x; j++) {
                 this.data[i][j] = color
@@ -50,16 +54,26 @@ export class BasicWindow implements Window {
     sendToBack() {
         this.man.sendToBack(this.id)
     }
+    hide() {
+        if (this.showing) {
+            this.showing = false
+            this.man.hideWindow(this.id)
+        }
+    }
+    show() {
+        if (!this.showing) {
+            this.showing = true
+            this.man.add(this, this.id)
+        }
+    }
     render() {
         for (let i = 0; i < this.y; i++) {
             for (let j = 0; j < this.x; j++) {
-                if (
-                    this.pos[0] + i < display.y &&
-                    this.pos[1] + j < display.x
-                ) {
-                    display.pixels[this.pos[0] + i][this.pos[1] + j] =
-                        this.data[i][j]
-                }
+                display.setPixel(
+                    this.pos[0] + i,
+                    this.pos[1] + j,
+                    this.data[i][j],
+                )
             }
         }
     }
@@ -103,5 +117,12 @@ export class BasicWindow implements Window {
             out += font[i as keyof typeof font].width + 1
         }
         return out
+    }
+    drawBitmap(y: number, x: number, bitmap: string[][]) {
+        for (let i = 0; i < bitmap.length; i++) {
+            for (let j = 0; j < bitmap[0].length; j++) {
+                this.data[y + i][x + j] = bitmap[i][j]
+            }
+        }
     }
 }

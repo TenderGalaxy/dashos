@@ -118,10 +118,10 @@ export class BasicWindow implements Window {
         }
         return out
     }
-    drawBitmap(y: number, x: number, bitmap: string[][]) {
+    drawBitmap(pos: [number, number], bitmap: string[][]) {
         for (let i = 0; i < bitmap.length; i++) {
             for (let j = 0; j < bitmap[0].length; j++) {
-                this.data[y + i][x + j] = bitmap[i][j]
+                this.data[pos[0] + i][pos[1] + j] = bitmap[i][j]
             }
         }
     }

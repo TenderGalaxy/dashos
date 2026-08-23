@@ -12,13 +12,16 @@ export class DraggableWindow extends BasicWindow {
         if (y < 7) {
             throw new Error('Window is too small.')
         }
-        super(x, y, pos, man)
+        super(y, x, pos, man)
         this.fillBorder(display.black)
-        this.drawBitmap(2, 2, [
-            [display.black, display.white, display.black],
-            [display.white, display.black, display.white],
-            [display.black, display.white, display.black],
-        ])
+        this.drawBitmap(
+            [2, 2],
+            [
+                [display.black, display.white, display.black],
+                [display.white, display.black, display.white],
+                [display.black, display.white, display.black],
+            ],
+        )
         for (let i = 0; i < x; i++) {
             this.data[6][i] = display.black
         }
@@ -35,15 +38,21 @@ export class DraggableWindow extends BasicWindow {
             relativeCPos[1] >= this.x
         )
             return
-        this.bringToFront()
         if (
-            relativeCPos[0] > 2 &&
-            relativeCPos[0] < 5 &&
-            relativeCPos[1] > 2 &&
-            relativeCPos[1] < 5
+            relativeCPos[0] >= 2 &&
+            relativeCPos[0] <= 5 &&
+            relativeCPos[1] >= 2 &&
+            relativeCPos[1] <= 5
         )
             this.hide()
-        this.onClick(relativeCPos)
+        if (this.isFrontWindow()) {
+            this.onClick(relativeCPos)
+        } else {
+            this.bringToFront()
+        }
     }
     onClick = function (cursorPos: [number, number]) {}
+    isFrontWindow() {
+        return this.man.regist[0] == this.id
+    }
 }

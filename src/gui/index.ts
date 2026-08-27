@@ -4,7 +4,7 @@ export * from './cursors.ts'
 export * from './windows.ts'
 export * from './draggableWindows.ts'
 
-import { callbacks } from '../boot/callbackManager.ts'
+import { callbackManager } from '../boot/callbackManager.ts'
 import { display } from './screen.ts'
 import { windows } from './windowManager.ts'
 import { BasicWindow } from './windows.ts'
@@ -20,7 +20,7 @@ import { cursorPos } from './cursors.ts'
         ],
     )
     cursorWindow.hide()
-    callbacks.tick.push(function () {
+    callbackManager.createCallback('tick', function () {
         display.fill()
         windows.render()
         cursorWindow.pos = cursorPos

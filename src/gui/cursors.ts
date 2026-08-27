@@ -1,9 +1,9 @@
 import { display } from './screen.ts'
 import { user } from '../utils/user.ts'
-import { callbacks } from '../boot/callbackManager.ts'
+import { callbackManager } from '../boot/callbackManager.ts'
 
 export let cursorPos: [number, number] = [0, 0]
-callbacks.tick.push(function () {
+callbackManager.createCallback('tick', function () {
     const { dir, camPos } = api.getPlayerFacingInfo(user as string)
     const scaling = (display.pos[2] - camPos[2]) / dir[2]
     let pPos = [

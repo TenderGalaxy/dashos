@@ -133,10 +133,19 @@ class Disk {
         const c = yield* this.readFile(file)
         return JSON.parse(c).children
     }
-    *deleteFile(parent: string, name: string) {
+    *sDeleteFile(parent: string, name: string) {
         let parentC = yield* this.readdir(parent)
         parentC.splice(parentC.indexOf(name), 1)
         yield* this.writeFile(parent, JSON.stringify({ children: parentC }))
+    }
+    *deleteFile(name: string) {
+        let v = name.split('/')
+        yield* this.sDeleteFile(v.slice(0, -1).join('/'), v[v.length - 1])
+    }
+    *isFile(name: string) {
+        let v = this.hash(name)
+        yield* this.loadChunk([...v, 0])
+        return this._readFilePage(v, 0) != ''
     }
     joinPath(...args: string[]): string {
         return args.join('/')

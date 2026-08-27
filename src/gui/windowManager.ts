@@ -1,4 +1,4 @@
-import { callbacks } from '../boot/callbackManager.ts'
+import { callbackManager } from '../boot/callbackManager.ts'
 import { cursorPos } from './cursors.ts'
 export const windows = {
     regist: Array<string>(),
@@ -12,12 +12,11 @@ export const windows = {
         this.regist.push(id)
     },
     sendToBack(id: string) {
-        this.regist.splice(this.regist.indexOf(id, 1))
+        this.regist.splice(this.regist.indexOf(id), 1)
         this.regist.unshift(id)
     },
     hideWindow(id: string) {
         this.regist.splice(this.regist.indexOf(id), 1)
-        delete this.funcs[id]
     },
     render() {
         for (let i of this.regist) {
@@ -29,12 +28,13 @@ export const windows = {
         this.funcs = {}
     },
 }
-callbacks.onPlayerClick.push(function () {
-    for (let i of windows.regist) {
-        windows.funcs[i].click(cursorPos)
+callbackManager.createCallback('onPlayerClick', function () {
+    // Unfortunately we have to use backwards iteration here :(
+    for (let i = windows.regist.length - 1; i >= 0; i--) {
+        if (windows.funcs[windows.regist[i]].click(cursorPos)) return
     }
 })
 export interface Window {
-    click(pos: [number, number]): void
+    click(pos: [number, number]): boolean
     render(): void
 }

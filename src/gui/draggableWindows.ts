@@ -1,6 +1,7 @@
 import { BasicWindow } from './windows.ts'
 import { windows } from './windowManager.ts'
 import { display } from './screen.ts'
+import { Thread } from '../boot/async.ts'
 
 export class DraggableWindow extends BasicWindow {
     constructor(
@@ -37,22 +38,25 @@ export class DraggableWindow extends BasicWindow {
             relativeCPos[1] < 0 ||
             relativeCPos[1] >= this.x
         )
-            return
+            return false
         if (
             relativeCPos[0] >= 2 &&
             relativeCPos[0] <= 5 &&
             relativeCPos[1] >= 2 &&
             relativeCPos[1] <= 5
-        )
+        ) {
             this.hide()
+            return true
+        }
         if (this.isFrontWindow()) {
             this.onClick(relativeCPos)
         } else {
             this.bringToFront()
         }
+        return true
     }
     onClick = function (cursorPos: [number, number]) {}
     isFrontWindow() {
-        return this.man.regist[0] == this.id
+        return this.man.regist[this.man.regist.length - 1] == this.id
     }
 }

@@ -63,16 +63,46 @@ let callbackNames = [
     'doPeriodicSave',
 ]
 
-export const callbacks: Record<string, Function[]> = Object.fromEntries(
-    callbackNames.map((i) => [i, []]),
-)
+export const callbackManager = {
+    regist: Object.fromEntries(
+        callbackNames.map((i) => [
+            i,
+            {
+                regist: {},
+                funcs: [],
+            },
+        ]),
+    ),
+    createCallback(name: string, func: () => void) {
+        const id = Math.random().toString(36)
+        //@ts-expect-error
+        this.regist[name].regist[id] = func
+        //@ts-expect-error
+        this.regist[name].funcs.push(id)
+        return id
+    },
+    deleteCallback(name: string, id: string) {
+        //@ts-expect-error
+        this.regist[name].funcs.splice(this.regist[name].funcs.indexOf(id), 1)
+        //@ts-expect-error
+        delete this.regist[name].regist[id]
+    },
+    prioritizeCallback(name: string, id: string) {
+        //@ts-expect-error
+        this.regist[name].funcs.splice(this.regist[name].funcs.indexOf(id), 1)
+        //@ts-expect-error
+        this.regist[name].funcs.push(id)
+    },
+}
 
 for (let callback of callbackNames) {
     // @ts-expect-error
     globalThis[callback] = function () {
         let returnValue: any = undefined
-        for (let j of callbacks[callback]) {
-            let out = (j as Function)(...arguments)
+        for (let j of callbackManager.regist[callback].funcs) {
+            let out = (callbackManager.regist[callback].regist[j] as Function)(
+                ...arguments,
+            )
             if (out != undefined) {
                 returnValue = out
             }

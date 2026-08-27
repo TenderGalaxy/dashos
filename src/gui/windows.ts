@@ -38,7 +38,16 @@ export class BasicWindow implements Window {
         }
     }
     click(a: [number, number]) {
+        let rcpos = [a[0] - this.pos[0], a[1] - this.pos[1]]
+        if (
+            rcpos[0] < 0 ||
+            rcpos[0] > this.y ||
+            rcpos[1] < 0 ||
+            rcpos[1] > this.x
+        )
+            return false
         this.onClick([a[0] - this.pos[0], a[1] - this.pos[1]])
+        return true
     }
     onClick = function (cursorPos: [number, number]) {}
     fill(color: string) {
@@ -82,41 +91,28 @@ export class BasicWindow implements Window {
         text: string,
         maxX = this.x - 1,
         on = display.black,
-        off = display.white,
         spacing = 0,
     ) {
         let [y, x] = pos
         for (let i of text) {
             let { width, height } = font[i as keyof typeof font]
             if (width + x > maxX) {
-                x = pos[0]
+                x = pos[1]
                 y += meta.height + 1
             }
-            this.drawCharAt([y + meta.height, x], i, on, off)
+            this.drawCharAt([y + meta.height, x], i, on)
             x += width + spacing
         }
     }
-    drawCharAt(
-        pos: [number, number],
-        text: string,
-        on = display.black,
-        off = display.white,
-    ) {
+    drawCharAt(pos: [number, number], text: string, on = display.black) {
         let { width, height, pixels } = font[text as keyof typeof font]
         let idx = 0
         for (let i = 0; i < height; i++) {
             for (let j = 0; j < width; j++, idx++) {
-                this.data[pos[0] - height + i][pos[1] + j] =
-                    pixels[idx] == '1' ? on : off
+                if (pixels[idx] == '1')
+                    this.data[pos[0] - height + i][pos[1] + j] = on
             }
         }
-    }
-    getTextColumnAmount(text: string) {
-        let out = 0
-        for (let i of text) {
-            out += font[i as keyof typeof font].width + 1
-        }
-        return out
     }
     drawBitmap(pos: [number, number], bitmap: string[][]) {
         for (let i = 0; i < bitmap.length; i++) {
@@ -125,4 +121,35 @@ export class BasicWindow implements Window {
             }
         }
     }
+    fillRect(
+        miny = 0,
+        maxy = this.y - 1,
+        minx = 0,
+        maxx = this.x - 1,
+        fill = display.white,
+    ) {
+        for (let i = miny; i < maxy; i++) {
+            for (let j = minx; j < maxx; j++) {
+                this.data[i][j] = fill
+            }
+        }
+    }
+}
+export function getTextColumnAmount(text: string) {
+    let out = 0
+    for (let i of text) {
+        out += font[i as keyof typeof font].width + 1
+    }
+    return out
+}
+export function trimStringBackwards(text: string, width: number) {
+    let out = ''
+    let amt = 0
+    let idx = text.length - 1
+    while (amt < width && idx > -1) {
+        amt += font[text[idx] as keyof typeof font].width + 1
+        out = text[idx] + out
+        idx--
+    }
+    return amt < width ? text : out.slice(0, -1)
 }

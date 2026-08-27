@@ -1,4 +1,4 @@
-import { callbacks } from './callbackManager.ts'
+import { callbackManager } from './callbackManager.ts'
 export let time = 0
 
-callbacks!.tick!.push(() => time++)
+callbackManager.createCallback('tick', () => time++)

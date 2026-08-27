@@ -1,4 +1,4 @@
-import { callbacks } from './callbackManager.ts'
+import { callbackManager } from './callbackManager.ts'
 import { time } from './time.ts'
 import { catchError } from './errors.ts'
 interface tsPlan {
@@ -43,7 +43,7 @@ export const ts: tsPlan = {
         return t
     },
 }
-callbacks!.tick!.push(function () {
+callbackManager.createCallback('tick', function () {
     ts.stack.push(...(ts.tasks[time] || []))
     delete ts.tasks[time]
     while (ts.stack.length > 0) {

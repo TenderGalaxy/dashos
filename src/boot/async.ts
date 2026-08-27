@@ -5,6 +5,7 @@ type ThenFunction = (...args: any[]) => void
 export class Thread {
     task
     mode = this.every(2)
+    isThread = null
     returnValue: any
     constructor(f: Generator<any, any, any>) {
         this.task = f
@@ -53,6 +54,9 @@ export class Thread {
 export const thl = {
     awaitPromise(f: Vow) {
         return { async: 'await', func: f }
+    },
+    isThread(f: object) {
+        return Object.hasOwn(f, 'isThread')
     },
     awaitAll(l: Vow[]) {
         let out: any[] = []

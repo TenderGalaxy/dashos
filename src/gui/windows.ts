@@ -1,7 +1,7 @@
 import { windows, type Window } from './windowManager.ts'
 import { display } from './screen.ts'
-import font from '../utils/font/fonts/default.json' with { type: 'json' }
-import meta from '../utils/font/fonts/defaultMeta.json' with { type: 'json' }
+import font from '../font/fonts/default.json' with { type: 'json' }
+import meta from '../font/fonts/defaultMeta.json' with { type: 'json' }
 
 export class BasicWindow implements Window {
     pos
@@ -10,7 +10,6 @@ export class BasicWindow implements Window {
     data: Array<Array<string>>
     id: string
     man
-    showing = true
     constructor(
         y: number,
         x: number,
@@ -64,16 +63,7 @@ export class BasicWindow implements Window {
         this.man.sendToBack(this.id)
     }
     hide() {
-        if (this.showing) {
-            this.showing = false
-            this.man.hideWindow(this.id)
-        }
-    }
-    show() {
-        if (!this.showing) {
-            this.showing = true
-            this.man.add(this, this.id)
-        }
+        this.man.hideWindow(this.id)
     }
     render() {
         for (let i = 0; i < this.y; i++) {
@@ -95,6 +85,11 @@ export class BasicWindow implements Window {
     ) {
         let [y, x] = pos
         for (let i of text) {
+            if (i == '\n') {
+                x = pos[1]
+                y += meta.height + 1
+                continue
+            }
             let { width, height } = font[i as keyof typeof font]
             if (width + x > maxX) {
                 x = pos[1]
@@ -114,10 +109,15 @@ export class BasicWindow implements Window {
             }
         }
     }
-    drawBitmap(pos: [number, number], bitmap: string[][]) {
-        for (let i = 0; i < bitmap.length; i++) {
-            for (let j = 0; j < bitmap[0].length; j++) {
-                this.data[pos[0] + i][pos[1] + j] = bitmap[i][j]
+    drawBitmap(
+        pos: [number, number],
+        height: number,
+        width: number,
+        bitmap: string[],
+    ) {
+        for (let i = 0, idx = 0; i < height; i++) {
+            for (let j = 0; j < width; j++, idx++) {
+                this.data[pos[0] + i][pos[1] + j] = bitmap[idx]
             }
         }
     }
@@ -152,4 +152,53 @@ export function trimStringBackwards(text: string, width: number) {
         idx--
     }
     return amt < width ? text : out.slice(0, -1)
+}
+export function splitString(text: string, length: number) {
+    let out = []
+    let cur = '',
+        curWidth = 0
+    for (let i of text) {
+        if (curWidth + font[i as keyof typeof font].width + 1 > length) {
+            out.push(cur)
+            cur = ''
+        }
+        cur += i
+        curWidth += font[i as keyof typeof font].width + 1
+    }
+    out.push(cur)
+    return out
+}
+export function splitBox(text: string, y: number, x: number) {
+    let out = []
+
+    let cur = '',
+        curPos = [0, 0]
+    for (let i of text) {
+        if (i == '\n') {
+            curPos[0] += meta.height + 1
+            curPos[1] = 0
+            if (curPos[0] + meta.height + 1 > y) {
+                out.push(cur)
+                cur = ''
+                curPos = [0, 0]
+            } else {
+                cur += '\n'
+            }
+            continue
+        }
+        if (curPos[1] + font[i as keyof typeof font].width + 1 > x) {
+            curPos[1] = 0
+            curPos[0] += meta.height + 1
+        }
+        if (curPos[0] + meta.height + 1 > y) {
+            out.push(cur)
+            cur = i
+            curPos = [0, 0]
+        } else {
+            cur += i
+            curPos[1] += font[i as keyof typeof font].width + 1
+        }
+    }
+    out.push(cur)
+    return out
 }

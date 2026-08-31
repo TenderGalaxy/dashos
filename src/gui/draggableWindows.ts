@@ -15,14 +15,17 @@ export class DraggableWindow extends BasicWindow {
         }
         super(y, x, pos, man)
         this.fillBorder(display.black)
-        this.drawBitmap(
-            [2, 2],
-            [
-                [display.black, display.white, display.black],
-                [display.white, display.black, display.white],
-                [display.black, display.white, display.black],
-            ],
-        )
+        this.drawBitmap([2, 2], 3, 3, [
+            display.black,
+            display.white,
+            display.black,
+            display.white,
+            display.black,
+            display.white,
+            display.black,
+            display.white,
+            display.black,
+        ])
         for (let i = 0; i < x; i++) {
             this.data[6][i] = display.black
         }
@@ -45,6 +48,7 @@ export class DraggableWindow extends BasicWindow {
             relativeCPos[1] >= 2 &&
             relativeCPos[1] <= 5
         ) {
+            this.onClose()
             this.hide()
             return true
         }
@@ -56,6 +60,7 @@ export class DraggableWindow extends BasicWindow {
         return true
     }
     onClick = function (cursorPos: [number, number]) {}
+    onClose = function () {}
     isFrontWindow() {
         return this.man.regist[this.man.regist.length - 1] == this.id
     }

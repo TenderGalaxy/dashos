@@ -1,6 +1,7 @@
 {
     "type": "module",
     "dependencies": {
+        "avsc": "^5.7.9",
         "chalk": "^6.0.0",
         "esbuild": "^0.28.2",
         "sharp": "^0.35.3"
@@ -9,7 +10,11 @@
         "esbuild@0.28.2": true
     },
     "scripts": {
-        "build": "python3 src/utils/font/make.py && node ./src/textures/parseTextures.ts && esbuild ./src/wc.ts --bundle --format=esm --tree-shaking=false --outfile=dist/wc.js && esbuild ./src/cb.ts --bundle --format=esm --tree-shaking=false --outfile=dist/cb.js && cp ./dist/wc.js ./dist/index.js"
+        "makeFont": "python3 src/font/make.py",
+        "makeTextures": "node ./ext/textures/parseTextures.ts",
+        "esbuild": "esbuild ./src/wc.ts --bundle --format=esm --tree-shaking=false --outfile=dist/wc.js && esbuild ./src/cb.ts --bundle --format=esm --tree-shaking=false --outfile=dist/cb.js",
+        "makeDisk": " node src/disk/make.ts",
+        "build": "npm run makeFont && npm run makeTextures && npm run makeDisk && npm run esbuild && cp ./dist/wc.js ./dist/index.js"
     },
     "sideEffects": [
         "**/*"

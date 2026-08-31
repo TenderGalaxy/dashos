@@ -1,0 +1,35 @@
+Welcome to DashOS!
+Official source: https://www.github.com/tendergalaxy/dashos
+Contact us: fenl.dev@atomicmail.io
+
+What to do:
+Try exploring! There's a lot of things you can do, and here are some
+examples to get you started:
+
+Open settings.app and configure everything you want
+Download a few games and apps and see if you can get them to run
+
+Notice:
+
+TL/DR: You can delete this file if you aren't going to share, sell,
+or distribute this work or a derivative of it. If you want to share
+this with a friend, cite the official distribution page as
+https://www.github.com/tendergalaxy/dashos
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+GNU General Public License for more details.
+
+Under the terms of the GNU General Public License, you may modify
+and create new versions of this work, but if you share, sell,
+or distribute it, your new version has to also be under the GNU
+General Public License. Deleting this license is illegal if you
+will share, sell, or distribute this work without linking the
+official distribution page:
+https://www.github.com/tendergalaxy/dashos

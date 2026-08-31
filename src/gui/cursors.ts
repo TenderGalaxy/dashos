@@ -1,5 +1,5 @@
 import { display } from './screen.ts'
-import { user } from '../utils/user.ts'
+import { user } from '../boot/user.ts'
 import { callbackManager } from '../boot/callbackManager.ts'
 
 export let cursorPos: [number, number] = [0, 0]

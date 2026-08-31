@@ -17,6 +17,7 @@ export const windows = {
     },
     hideWindow(id: string) {
         this.regist.splice(this.regist.indexOf(id), 1)
+        delete this.funcs[id]
     },
     render() {
         for (let i of this.regist) {

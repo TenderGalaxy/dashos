@@ -2,7 +2,7 @@ import './async.ts'
 
 type rawFile = [number, number]
 // Functions starting with an _ assume the file is already loaded and take in raw file input instead of filenames.
-// Chapters are the smallest units of files: individual customDescriptions.
+// Nets are the smallest units of files: individual customDescriptions.
 // Pages are the next-largest component, using chests.
 // File Config Page: -1
 class Disk {
@@ -113,34 +113,33 @@ class Disk {
         this._writeFilePage(f, 0, '{"pages": 1}')
         this._writeFilePage(f, 1, '{"children": []}')
     }
-    *createNewFile(parent: string, name: string) {
-        let child = this.hash(this.joinPath(parent, name))
-        let parentFile = this.hash(parent)
-        yield* this._loadFile(parentFile)
-
-        let parentFileContents = JSON.parse(yield* this._readFile(parentFile))
-        parentFileContents.children.push(name)
-        yield* this._writeFile(parentFile, JSON.stringify(parentFileContents))
-
+    *touch(name: string) {
+        let spl = name.split('/')
+        let parentName = spl.slice(0, -1).join('/')
+        let childName = spl[spl.length - 1]
+        let parentFileContents = JSON.parse(yield* this.readFile(parentName))
+        if (parentFileContents.children.indexOf(childName) == -1)
+            parentFileContents.children.push(childName)
+        yield* this.writeFile(parentName, JSON.stringify(parentFileContents))
+        let child = this.hash(name)
         yield* this.loadChunk([...child, 0])
         this._writeFilePage(child, 0, '{"pages": 0}')
     }
-    *mkdir(parent: string, name: string) {
-        yield* this.createNewFile(parent, name)
-        yield* this.writeFile(this.joinPath(parent, name), '{"children": []}')
+    *mkdir(name: string) {
+        yield* this.touch(name)
+        yield* this.writeFile(this.joinPath(name), '{"children": []}')
     }
     *readdir(file: string) {
         const c = yield* this.readFile(file)
         return JSON.parse(c).children
     }
-    *sDeleteFile(parent: string, name: string) {
-        let parentC = yield* this.readdir(parent)
-        parentC.splice(parentC.indexOf(name), 1)
-        yield* this.writeFile(parent, JSON.stringify({ children: parentC }))
-    }
     *deleteFile(name: string) {
         let v = name.split('/')
-        yield* this.sDeleteFile(v.slice(0, -1).join('/'), v[v.length - 1])
+        let parent = v.slice(0, -1).join('/')
+        let child = v[v.length - 1]
+        let parentC = yield* this.readdir(parent)
+        parentC.splice(parentC.indexOf(child), 1)
+        yield* this.writeFile(parent, JSON.stringify({ children: parentC }))
     }
     *isFile(name: string) {
         let v = this.hash(name)

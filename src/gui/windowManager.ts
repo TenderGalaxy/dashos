@@ -1,5 +1,6 @@
 import { callbackManager } from '../boot/callbackManager.ts'
 import { cursorPos } from './cursors.ts'
+import { user } from '../boot/user.ts'
 export const windows = {
     regist: Array<string>(),
     funcs: {} as Record<string, Window>,
@@ -29,7 +30,8 @@ export const windows = {
         this.funcs = {}
     },
 }
-callbackManager.createCallback('onPlayerClick', function () {
+callbackManager.createCallback('onPlayerClick', function (id: string) {
+    if (id != user) return
     // Unfortunately we have to use backwards iteration here :(
     for (let i = windows.regist.length - 1; i >= 0; i--) {
         if (windows.funcs[windows.regist[i]].click(cursorPos)) return

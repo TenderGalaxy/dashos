@@ -1,5 +1,5 @@
 Welcome to DashOS!
-Official source: https://www.github.com/tendergalaxy/dashos
+Official source: tendergalaxy/dashos@github
 Contact us: fenl.dev@atomicmail.io
 
 What to do:
@@ -14,7 +14,7 @@ Notice:
 TL/DR: You can delete this file if you aren't going to share, sell,
 or distribute this work or a derivative of it. If you want to share
 this with a friend, cite the official distribution page as
-https://www.github.com/tendergalaxy/dashos
+tendergalaxy/dashos@github
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -32,4 +32,4 @@ or distribute it, your new version has to also be under the GNU
 General Public License. Deleting this license is illegal if you
 will share, sell, or distribute this work without linking the
 official distribution page:
-https://www.github.com/tendergalaxy/dashos
+tendergalaxy/dashos@github

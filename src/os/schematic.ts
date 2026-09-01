@@ -15,7 +15,7 @@ export function readSchemLen(pos: [number, number, number]) {
         let len = 0
         while (1) {
             let byte = read(idx++)
-            val += (byte % 128) << (len * 7)
+            val += (byte & 0x7f) << (len * 7)
             if (byte >> 7 == 0) return val
             len++
         }
@@ -42,7 +42,7 @@ export function readSchematic(pos: [number, number, number]) {
         let len = 0
         while (1) {
             let byte = read(idx++)
-            val += (byte % 128) << (len * 7)
+            val += (byte & 0x7f) << (len * 7)
             if (byte >> 7 == 0) return val
             len++
         }
@@ -71,9 +71,9 @@ export function writeSchematic(
                 pos[0] + (idx >> 10),
                 pos[1] + (Math.floor(idx / 32) % 32),
                 pos[2] + (idx & 31),
-                ids[(val > 127 ? 128 : 0) + (val % 128)].toString(),
+                ids[(val >> 7 == 0 ? 0 : 128) + (val & 0x7f)].toString(),
             )
-            val = Math.floor(val / 128)
+            val >>= 7
             idx++
             if (val == 0) break
         }

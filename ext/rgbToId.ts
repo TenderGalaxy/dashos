@@ -5,27 +5,21 @@ function findDiff(a: [number, number, number], b: [number, number, number]) {
 export default function rgbToId(rgb: [number, number, number]) {
     let out = {
         loss: Number.MAX_VALUE,
-        val: 0,
-        name: '',
+        id: 0,
         rLoss: [0, 0, 0],
     }
     for (let i = 0; i < blocks.length; i++) {
-        let loss = findDiff(rgb, blocks[i][1][1] as [number, number, number])
+        let loss = findDiff(rgb, blocks[i].color as [number, number, number])
         if (loss < out.loss) {
             out.loss = loss
-            out.val = i
-            out.name = blocks[i][0] as string
+            out.id = blocks[i].id
             out.rLoss = [
-                //@ts-expect-error
-                rgb[0] - blocks[i][1][1][0],
-                //@ts-expect-error
-                rgb[1] - blocks[i][1][1][1],
-                //@ts-expect-error
-                rgb[2] - blocks[i][1][1][2],
+                rgb[0] - blocks[i].color[0],
+                rgb[1] - blocks[i].color[1],
+                rgb[2] - blocks[i].color[2],
             ]
         }
     }
-    console.log(out)
     return out
 }
 /*

@@ -4,6 +4,7 @@ export function floydSteinberg(
     arr: number[] | Buffer<ArrayBuffer>,
     w: number,
     h: number,
+    extent = 0,
 ) {
     let out = new Array(w * h)
 
@@ -12,11 +13,11 @@ export function floydSteinberg(
             let idx = y * w + x
             let arrIdx = idx * 3
             let v = rgbToId([arr[arrIdx], arr[arrIdx + 1], arr[arrIdx + 2]])
-            out[idx] = v.val
-            sendError(arr, x + 1, y, w, h, v.rLoss, 7 / 16)
-            sendError(arr, x - 1, y + 1, w, h, v.rLoss, 3 / 16)
-            sendError(arr, x, y + 1, w, h, v.rLoss, 5 / 16)
-            sendError(arr, x + 1, y + 1, w, h, v.rLoss, 1 / 16)
+            out[idx] = v.id
+            sendError(arr, x + 1, y, w, h, v.rLoss, (7 / 16) * extent)
+            sendError(arr, x - 1, y + 1, w, h, v.rLoss, (3 / 16) * extent)
+            sendError(arr, x, y + 1, w, h, v.rLoss, (5 / 16) * extent)
+            sendError(arr, x + 1, y + 1, w, h, v.rLoss, (1 / 16) * extent)
         }
     }
     return out
@@ -36,17 +37,17 @@ function sendError(
         0,
     )
     arr[(y * w + x) * 3 + 1] = Math.max(
-        Math.min(arr[(y * w + x) * 3 + 1] + err[0] * coef, 255),
+        Math.min(arr[(y * w + x) * 3 + 1] + err[1] * coef, 255),
         0,
     )
     arr[(y * w + x) * 3 + 2] = Math.max(
-        Math.min(arr[(y * w + x) * 3 + 2] + err[0] * coef, 255),
+        Math.min(arr[(y * w + x) * 3 + 2] + err[2] * coef, 255),
         0,
     )
 }
 
 import pkg from 'avsc'
-const { Type, createFileEncoder } = pkg
+const { Type } = pkg
 import { readFile } from 'node:fs/promises'
 
 const encodeSchema = Type.forSchema({
@@ -160,8 +161,8 @@ function read(ch: Buffer | number[], idx: { at: number }) {
     let val = 0
     let len = 0
     while (1) {
-        let byte = ch[idx.at++]
-        val += (byte % 128) << (len * 7)
+        let byte = ch[idx.at++] & 0xff
+        val += (byte & 0x7f) << (len * 7)
         if (byte >> 7 == 0) return val
         len++
     }
@@ -169,8 +170,8 @@ function read(ch: Buffer | number[], idx: { at: number }) {
 }
 function write(ch: number[], val: number) {
     while (1) {
-        ch.push((val > 127 ? 128 : 0) + (val % 128))
-        val = Math.floor(val / 128)
+        ch.push((val >> 7 == 0 ? 0 : 128) + (val & 0x7f))
+        val >>= 7
         if (val == 0) break
     }
 }

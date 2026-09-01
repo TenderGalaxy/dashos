@@ -1,4 +1,4 @@
-let callbackNames = [
+export const callbackNames = [
     'tick',
     'onClose',
     'onPlayerJoin',
@@ -73,7 +73,7 @@ export const callbackManager = {
             },
         ]),
     ),
-    createCallback(name: string, func: () => void) {
+    createCallback(name: string, func: Function) {
         const id = Math.random().toString(36)
         //@ts-expect-error
         this.regist[name].regist[id] = func

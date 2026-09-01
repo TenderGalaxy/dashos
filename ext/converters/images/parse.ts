@@ -2,6 +2,7 @@ import { readdir, writeFile } from 'node:fs/promises'
 import sharp from 'sharp'
 import { floydSteinberg } from '../libdfc.ts'
 import blocks from '../../textures/blocks.json' with { type: 'json' }
+import blockIds from '../../textures/blockIds.json' with { type: 'json' }
 
 const files = (await readdir('./ext/converters/images/in')).filter(
     (i) => !i.startsWith('.'),
@@ -21,9 +22,9 @@ for (let i of files) {
         pixels.data,
         pixels.info.width,
         pixels.info.height,
+        1,
     )
-    //@ts-expect-error
-    sharp(Buffer.from(data.flatMap((i) => blocks[i][1][1])), {
+    sharp(Buffer.from(data.flatMap((i) => blocks[blockIds.indexOf(i)].color)), {
         raw: {
             width: pixels.info.width,
             height: pixels.info.height,

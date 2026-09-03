@@ -18,6 +18,8 @@ for (let i = 0; i < blockNames.length; i++) {
     const block = blockNames[i]
     if (block.indexOf('|') != -1) continue
     if (block.includes('Glass')) continue
+    if (block.includes('Trapdoor')) continue
+    if (block.includes('Slab')) continue
     await parse(block, out, i, validBlockNames)
 }
 async function parse(

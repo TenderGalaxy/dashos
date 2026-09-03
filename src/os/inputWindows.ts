@@ -5,17 +5,18 @@ import { getTextColumnAmount } from '../gui/windows.ts'
 import { display } from '../gui/screen.ts'
 export * from './install.ts'
 import { user } from '../boot/user.ts'
+import { splitBox, trimStringBackwards } from '../gui/windows.ts'
 
 export function createTextInput() {
     let win = new DraggableWindow(20, 80, [20, 20])
     win.drawTextAt([8, 2], 'Type text in chat.')
-    return function (res: () => void) {
+    return function (res: (v: string) => void) {
         let callback = callbackManager.createCallback(
             'onPlayerChat',
             function (id: string, msg: string) {
                 if (id != user) return
                 callbackManager.deleteCallback('onPlayerChat', callback)
-                res()
+                res(msg)
                 win.hide()
             },
         )
@@ -41,6 +42,34 @@ export function createConfirmationWindow() {
                 res(p[1] < 30)
                 win.hide()
             }
+        }
+    }
+}
+export function createTextViewer(
+    path: string,
+    contents: string,
+    y: number,
+    x: number,
+    pos: [number, number],
+) {
+    let win = new DraggableWindow(y, x, pos)
+    win.drawTextAt([8, 18], trimStringBackwards(path, x - 20))
+    win.drawTextAt([8, 2], '<')
+    win.drawTextAt([8, 10], '>')
+    let split = splitBox(contents, y - 14, x - 2)
+    let page = 0
+    win.drawTextAt([14, 2], split[page])
+    win.onClick = function (pos) {
+        if (pos[0] < 14) {
+            if (pos[1] < 10) {
+                page--
+            } else if (pos[1] < 18) {
+                page++
+            }
+            if (page == -1) page = 0
+            if (page == split.length) page = split.length - 1
+            win.fillRect(14, y - 2, 2, x - 2)
+            win.drawTextAt([14, 2], split[page])
         }
     }
 }

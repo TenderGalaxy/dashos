@@ -1,4 +1,4 @@
-import { createTextViewer } from './inputWindows.ts'
+import { createTextViewer } from '../os/inputWindows.ts'
 import { contextualEval } from './eval.ts'
 import { fs } from '../boot/fs.ts'
 

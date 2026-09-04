@@ -2,12 +2,14 @@ import { windows, type Window } from './windowManager.ts'
 import { display } from './screen.ts'
 import font from '../font/fonts/default.json' with { type: 'json' }
 import meta from '../font/fonts/defaultMeta.json' with { type: 'json' }
+import { rgbToId } from '../utils/rgb.ts'
 
+type pixel = [number, number, number] | string
 export class BasicWindow implements Window {
     pos
     x
     y
-    data: Array<Array<string>>
+    data: Array<Array<pixel>>
     id: string
     man
     constructor(
@@ -26,7 +28,7 @@ export class BasicWindow implements Window {
         this.man = man
         this.man.add(this, this.id)
     }
-    fillBorder(color: string) {
+    fillBorder(color: pixel) {
         for (let i = 0; i < this.x; i++) {
             this.data[0][i] = color
             this.data[this.y - 1][i] = color
@@ -49,7 +51,7 @@ export class BasicWindow implements Window {
         return true
     }
     onClick = function (cursorPos: [number, number]) {}
-    fill(color: string) {
+    fill(color: pixel) {
         for (let i = 0; i < this.y; i++) {
             for (let j = 0; j < this.x; j++) {
                 this.data[i][j] = color
@@ -68,11 +70,11 @@ export class BasicWindow implements Window {
     render() {
         for (let i = 0; i < this.y; i++) {
             for (let j = 0; j < this.x; j++) {
-                display.setPixel(
-                    this.pos[0] + i,
-                    this.pos[1] + j,
-                    this.data[i][j],
-                )
+                let pix =
+                    typeof this.data[i][j] == 'string' ?
+                        (this.data[i][j] as string)
+                    :   rgbToId(this.data[i][j]).id
+                display.setPixel(this.pos[0] + i, this.pos[1] + j, pix)
             }
         }
     }
@@ -80,7 +82,7 @@ export class BasicWindow implements Window {
         pos: [number, number],
         text: string,
         maxX = this.x - 1,
-        on = display.black,
+        on: pixel = display.black,
         spacing = 0,
     ) {
         let [y, x] = pos
@@ -99,7 +101,7 @@ export class BasicWindow implements Window {
             x += width + spacing
         }
     }
-    drawCharAt(pos: [number, number], text: string, on = display.black) {
+    drawCharAt(pos: [number, number], text: string, on: pixel = display.black) {
         let { width, height, pixels } = font[text as keyof typeof font]
         let idx = 0
         for (let i = 0; i < height; i++) {
@@ -113,7 +115,7 @@ export class BasicWindow implements Window {
         pos: [number, number],
         height: number,
         width: number,
-        bitmap: string[],
+        bitmap: pixel[],
     ) {
         for (let i = 0, idx = 0; i < height; i++) {
             for (let j = 0; j < width; j++, idx++) {

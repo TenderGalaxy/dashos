@@ -11,7 +11,7 @@
     },
     "scripts": {
         "makeFont": "python3 src/font/make.py",
-        "makeTextures": "node ./ext/textures/parseTextures.ts",
+        "makeTextures": "node ./ext/textures/parseTextures.ts && node ./src/textures/build.ts",
         "esbuild": "esbuild ./src/wc.ts --bundle --format=esm --tree-shaking=false --outfile=dist/wc.js && esbuild ./src/cb.ts --bundle --format=esm --tree-shaking=false --outfile=dist/cb.js",
         "makeDisk": " node src/disk/make.ts",
         "build": "npm run makeFont && npm run makeTextures && npm run makeDisk && npm run esbuild && cp ./dist/wc.js ./dist/index.js"

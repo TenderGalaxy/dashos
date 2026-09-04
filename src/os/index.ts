@@ -4,13 +4,13 @@ import meta from '../font/fonts/defaultMeta.json' with { type: 'json' }
 import { Thread, thl } from '../boot/async.ts'
 import { trimStringBackwards } from '../gui/windows.ts'
 export * from './install.ts'
-import { writeSchematic, readSchematic } from './schematic.ts'
+import { writeSchematic, readSchematic } from '../utils/schematic.ts'
 import {
     alert,
     createConfirmationWindow,
     createTextInput,
 } from './inputWindows.ts'
-import { viewFile } from './runFile.ts'
+import { viewFile } from '../utils/runFile.ts'
 const root = 'user'
 const clipboardPos: [number, number, number] = [0, 96, 0]
 

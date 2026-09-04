@@ -14,6 +14,7 @@ let out: Array<{
 }> = []
 
 let validBlockNames: number[] = []
+let seenColors = new Map()
 for (let i = 0; i < blockNames.length; i++) {
     const block = blockNames[i]
     if (block.indexOf('|') != -1) continue
@@ -56,6 +57,8 @@ async function parse(
                 variance +=
                     i[0] + i[1] + i[2] - average[0] - average[1] - average[2]
             }
+            if (seenColors.has(average)) return
+            seenColors.set(average, 0)
             out.push({
                 id,
                 color: average,

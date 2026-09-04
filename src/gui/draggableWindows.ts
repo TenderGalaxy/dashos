@@ -2,8 +2,10 @@ import { BasicWindow } from './windows.ts'
 import { windows } from './windowManager.ts'
 import { display } from './screen.ts'
 import { Thread } from '../boot/async.ts'
+import { cursorPos } from './cursors.ts'
 
 export class DraggableWindow extends BasicWindow {
+    isBeingHeld = false
     constructor(
         y: number,
         x: number,
@@ -30,10 +32,10 @@ export class DraggableWindow extends BasicWindow {
             this.data[6][i] = display.black
         }
     }
-    click(cursorPos: [number, number]) {
+    click(cPos: [number, number]) {
         let relativeCPos: [number, number] = [
-            cursorPos[0] - this.pos[0],
-            cursorPos[1] - this.pos[1],
+            cPos[0] - this.pos[0],
+            cPos[1] - this.pos[1],
         ]
         if (
             relativeCPos[0] < 0 ||
@@ -50,6 +52,36 @@ export class DraggableWindow extends BasicWindow {
         ) {
             this.onClose()
             this.hide()
+            return true
+        }
+        if (relativeCPos[0] <= 5) {
+            if (this.isBeingHeld) {
+                this.isBeingHeld = false
+                return true
+            }
+            this.isBeingHeld = true
+            new Thread(
+                (function* (
+                    f: () => boolean,
+                    setY: (c: number) => void,
+                    setX: (c: number) => void,
+                ) {
+                    while (f()) {
+                        setY(cursorPos[0] - relativeCPos[0])
+                        setX(cursorPos[1] - relativeCPos[1])
+                        yield
+                        yield
+                    }
+                })(
+                    () => this.isBeingHeld,
+                    (c: number) => {
+                        this.pos[0] = c
+                    },
+                    (c: number) => {
+                        this.pos[1] = c
+                    },
+                ),
+            )
             return true
         }
         if (this.isFrontWindow()) {
